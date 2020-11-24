@@ -1,33 +1,77 @@
-// Get the GitHub username input form
-const gitHubForm = document.getElementById('gitHubForm');
+const gitHubDetailsNode = gitHubDOM.getAllNode(".github_details");
 
-// Listen for submissions on GitHub username input form
-gitHubForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    let usernameInput = document.getElementById('usernameInput');
-    let gitHubUsername = usernameInput.value;
-    requestUserRepos(gitHubUsername);
-})
+Array.from(gitHubDetailsNode).forEach((detail) => {
+  detail.addEventListener("blur", () => {
+    detail.removeAttribute("open");
+  });
+});
 
-
-function requestUserRepos(username){
-    const xhr = new XMLHttpRequest();
-    const url = `https://api.github.com/users/${username}/repos`;
-    xhr.open('GET', url, true);
-    xhr.onload = () => {
-        const data = JSON.parse(this.response);
-        for (let i in data) {
-            let ul = document.getElementById('userRepos');
-            let li = document.createElement('li');
-            li.classList.add('list-group-item')
-            li.innerHTML = (`
-                <p><strong>Repo:</strong> ${data[i].name}</p>
-                <p><strong>Description:</strong> ${data[i].description}</p>
-                <p><strong>URL:</strong> <a href="${data[i].html_url}">${data[i].html_url}</a></p>
-            `);
-            ul.appendChild(li);   
+fetch("https://api.github.com/graphql", {
+  method: "POST",
+  mode: "cors",
+  cache: "no-cache",
+  referrerPolicy: "no-referrer",
+  headers: {
+    "Content-Type": "application/json",
+    authorization: `token ${token} `,
+  },
+  body: JSON.stringify({
+    query: `
+  {
+    viewer {
+      login
+      avatarUrl
+      name
+      bio
+      status {
+        emojiHTML
+        message
+        __typename
+      }
+      repositories(last: 20, isFork: false) {
+        nodes {
+          name
+          description
+          url
+          stargazerCount
+          updatedAt
+          forkCount
+          isPrivate
+          languages(first: 5, orderBy: {field: SIZE, direction: DESC}) {
+            nodes {
+              color
+              name
+              __typename
+            }
+            __typename
+          }
+          __typename
         }
+        __typename
+      }
+      __typename
     }
-    xhr.send();
-    
-}
+  }
+  `,
+  }),
+})
+  .then((res) => {
+    return res.json();
+  })
+  .then(({ data }) => {
+    const { viewer } = data;
+    mapUserData(viewer);
+    [...viewer.repositories.nodes].reverse().forEach((repo) => {
+      mapRepoData(repo);
+    });
+  });
+
+//scroll animation on repo header
+const headerUserNode = gitHubDOM.getNode(".repo_app_header-user");
+window.addEventListener("scroll", (e) => {
+  if (window.scrollY >= 370) {
+    headerUserNode.classList.remove("hide");
+  } else {
+    headerUserNode.classList.add("hide");
+  }
+});
