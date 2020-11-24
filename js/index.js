@@ -8,18 +8,17 @@ const gitHubDOM = {
     userNodeContainer = Array.from(userNodeContainer);
   
     userNodeContainer.forEach(
-      (e) =>
-        (e.innerHTML += `<div class="dp_rapper_container">
+      (e) => (e.innerHTML += `<div class="dp_rapper_container">
     <div class="dp_container">
       <img
         src="${avatarUrl}"
-        alt=""
+        alt="avatar"
         class="dp_rapper"
         srcset=""
       /><span class="app_user_status"
         ><span class="icon"
           >${status.emojiHTML}</span
-        ><a href="/#" class="text"
+        ><a href="#" class="text"
           >${status.message}</a
         ></span
       >
@@ -32,7 +31,7 @@ const gitHubDOM = {
   <span class="app_user_status mbl open"
     ><span class="icon"
       >${status.emojiHTML}</span
-    ><a href="/#" class="text"
+    ><a href="#" class="text"
       >${status.message}</a
     ></span
   >
@@ -48,7 +47,7 @@ const gitHubDOM = {
     name,
     isPrivate,
     updatedAt,
-    stargazerCount,
+    starCount,
     forkCount,
     description,
     url,
@@ -95,7 +94,7 @@ const gitHubDOM = {
            }
           
           ${ActionButton({
-            count: stargazerCount,
+            count: starCount,
             svg: `<svg
           xmlns="http://www.w3.org/2000/svg"
           class="octicon octicon-star mr-1"
@@ -154,11 +153,11 @@ const gitHubDOM = {
   
   function formatDate(date_str) {
     const date = new Date(date_str);
-    const ye = new Intl.DateTimeFormat("en", { year: "numeric" }).format(date);
-    const mo = new Intl.DateTimeFormat("en", { month: "short" }).format(date);
-    const da = new Intl.DateTimeFormat("en", { day: "2-digit" }).format(date);
+    const y = new Intl.DateTimeFormat("en", { year: "numeric" }).format(date);
+    const m = new Intl.DateTimeFormat("en", { month: "short" }).format(date);
+    const d = new Intl.DateTimeFormat("en", { day: "2-digit" }).format(date);
   
-    return `${da} ${mo} ${ye}`;
+    return `${d} ${m} ${y}`;
   }
   
   function ActionButton({ count, svg }) {

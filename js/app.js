@@ -13,7 +13,7 @@ fetch("https://api.github.com/graphql", {
   referrerPolicy: "no-referrer",
   headers: {
     "Content-Type": "application/json",
-    authorization: `token ${token} `,
+    authorization: `token ${key} `,
   },
   body: JSON.stringify({
     query: `
@@ -28,7 +28,7 @@ fetch("https://api.github.com/graphql", {
         message
         __typename
       }
-      repositories(last: 20, isFork: false) {
+      repositories(last: 20) {
         nodes {
           name
           description
@@ -66,7 +66,6 @@ fetch("https://api.github.com/graphql", {
     });
   });
 
-//scroll animation on repo header
 const headerUserNode = gitHubDOM.getNode(".repo_app_header-user");
 window.addEventListener("scroll", (e) => {
   if (window.scrollY >= 370) {
